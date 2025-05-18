@@ -1,53 +1,50 @@
 import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 export default function NACECodeFinder() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showResults, setShowResults] = useState(false);
 
-  const handleSearch = () => {
-    setShowResults(true);
+  const filteredData = data.filter(
+    (item) =>
+      item.CODE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.NAME.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleReset = () => {
+    setSearchQuery('');
   };
-
-  const filteredData = showResults
-    ? data.filter(
-        (item) =>
-          item.CODE.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.NAME.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center">NACE Code Finder</h1>
       <div className="flex gap-2 mb-4">
-        <Input
+        <input
+          type="text"
           placeholder="Search by Code or Name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1"
+          className="flex-1 border rounded p-2"
         />
-        <Button onClick={handleSearch} className="px-4 py-2">Search</Button>
+        <button onClick={handleReset} className="px-4 py-2 bg-red-500 text-white rounded">Reset</button>
       </div>
 
-      {showResults && filteredData.length > 0 ? (
+      {filteredData.length > 0 ? (
         filteredData.map((item, index) => (
-          <Card key={index} className="mb-4 shadow-lg">
-            <CardContent>
-              <p><strong>Code:</strong> {item.CODE}</p>
-              <p><strong>Name:</strong> {item.NAME}</p>
-              <p><strong>Includes:</strong> {item.Includes}</p>
-              {item.IncludesAlso && <p><strong>Includes Also:</strong> {item.IncludesAlso}</p>}
-              {item.Excludes && <p><strong>Excludes:</strong> {item.Excludes}</p>}
-            </CardContent>
-          </Card>
+          <div key={index} className="mb-4 shadow-lg border rounded p-4">
+            <p><strong>Code:</strong> {item.CODE}</p>
+            <p><strong>Name:</strong> {item.NAME}</p>
+            <p><strong>Includes:</strong> {item.Includes}</p>
+            {item.IncludesAlso && <p><strong>Includes Also:</strong> {item.IncludesAlso}</p>}
+            {item.Excludes && <p><strong>Excludes:</strong> {item.Excludes}</p>}
+          </div>
         ))
-      ) : showResults ? (
+      ) : searchQuery ? (
         <p className="text-center mt-4">No results found.</p>
       ) : null}
     </div>
   );
 }
 
+const data = [
+  { CODE: 'A01', NAME: 'Crop and animal production, hunting and related service activities', Includes: 'Growing of cereals, vegetables, and other crops', Excludes: 'Forestry and logging' },
+  { CODE: 'A02', NAME: 'Forestry and logging', Includes: 'Production of roundwood, operation of forestry nurseries', Excludes: 'Manufacture of furniture' }
+];
